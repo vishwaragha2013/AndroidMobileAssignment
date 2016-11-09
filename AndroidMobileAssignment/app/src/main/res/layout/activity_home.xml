@@ -11,7 +11,62 @@
     tools:context="com.android.mobileassignment.HomeActivity">
 
     <TextView
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:textSize="@dimen/text_size_mediam"
+        android:text="@string/text_name" />
+
+    <EditText
+        android:id="@+id/edt_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tv_name"
+        android:layout_below="@+id/tv_name"
+        android:ems="10"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/small_margin"
+        android:background="@drawable/editext_border"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/tv_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/edt_name"
+        android:layout_below="@+id/edt_name"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/text_size_mediam"
+        android:text="@string/text_location" />
+
+    <TextView
+        android:id="@+id/tv_location_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tv_location"
+        android:layout_below="@+id/tv_location"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="12.556,-237865.89" />
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/edt_name"
+        android:layout_below="@+id/tv_location_value"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/text_submit" />
+
+    <TextView
+        android:id="@+id/tv_last_submitted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_submit"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:text="Last submitted 5 mins ago" />
 </RelativeLayout>
