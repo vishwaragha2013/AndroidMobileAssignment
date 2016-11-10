@@ -143,20 +143,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
     @Subscribe
-    public void onEventMainThread(Integer code) {
-
-        final int statusCode = code;
-        runOnUiThread(new Runnable() {
-            public void run() {
-                if (statusCode == 201) {
-                    Date startTime = new Date();
-                    AppUtils.putStringToPref(HomeActivity.this, AppConstants.TIME, Long.toString(startTime.getTime()));
-                }
-            }
-        });
-    }
-
-    @Subscribe
     public void onEventMainThread(ErrorType errorType) {
         if (errorType == ErrorType.NO_INTERNET) {
             AppUtils.showDialog(this, R.string.internet_error);

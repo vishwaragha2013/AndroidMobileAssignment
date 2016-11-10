@@ -2,12 +2,17 @@ package com.android.mobileassignment.model;
 
 import android.app.Activity;
 import android.widget.Toast;
+
 import com.android.mobileassignment.AppConstants;
 import com.android.mobileassignment.R;
 import com.android.mobileassignment.data.ErrorType;
+import com.android.mobileassignment.utils.AppUtils;
 import com.android.mobileassignment.utils.network.VolleyServiceGateway;
 import com.android.volley.VolleyError;
+
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,15 +58,15 @@ public class SubmitLocationModel {
                 mContext.runOnUiThread(new Runnable() {
                     public void run() {
                         if (statusCode == 201) {
-
+                            Date startTime = new Date();
+                            AppUtils.putStringToPref(mContext, AppConstants.TIME, Long.toString(startTime.getTime()));
                             Toast.makeText(mContext, mContext.getString(R.string.success_submit_location), Toast.LENGTH_SHORT).show();
                         } else {
-                    Toast.makeText(mContext, mContext.getString(R.string.failure_submit_location), Toast.LENGTH_SHORT).show();
-                }
+                            Toast.makeText(mContext, mContext.getString(R.string.failure_submit_location), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
-                mEventBus.post(Integer.valueOf(statusCode));
             }
 
             @Override
