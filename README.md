@@ -11,7 +11,7 @@ Android Studio
 
 # Getting Started
 
-These samples use the Gradle build system.
+This project uses the Gradle build system.
 
 First download the project by cloning this repository or downloading an archived snapshot.
 
