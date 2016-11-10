@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.mobileassignment.AppConstants;
 import com.android.mobileassignment.R;
 import com.android.mobileassignment.data.ErrorType;
 import com.android.mobileassignment.presenter.LocationPresenter;
@@ -29,7 +31,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
+/**
+ * This class implements Home Screen implementation which describes about  location submission to server
+ */
 public class HomeActivity extends AppCompatActivity {
 
 
@@ -58,8 +62,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        mEventBus.register(this);
-
         tvName.setPaintFlags(tvName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvLocation.setPaintFlags(tvLocation.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
@@ -68,6 +70,8 @@ public class HomeActivity extends AppCompatActivity {
         initGps();
 
         setUserName();
+
+        updateTime();
 
         updateLastSubmittedTime();
 
@@ -96,15 +100,15 @@ public class HomeActivity extends AppCompatActivity {
         if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
-            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
     }
 
 
-    private void setUserName(){
-        String name=AppUtils.getStringFromPref(this,"username","John Doe");
-        if(name.isEmpty()){
-            name="John Doe";
+    private void setUserName() {
+        String name = AppUtils.getStringFromPref(this, AppConstants.USER_NAME, "John Doe");
+        if (name.isEmpty()) {
+            name = "John Doe";
         }
         edtName.setText(name);
     }
@@ -113,6 +117,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mEventBus.register(this);
     }
 
     @Override
@@ -121,10 +126,10 @@ public class HomeActivity extends AppCompatActivity {
         if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
-            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
 
-
+        mEventBus.unregister(this);
     }
 
     @OnClick(R.id.btn_submit)
@@ -132,7 +137,7 @@ public class HomeActivity extends AppCompatActivity {
         if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
-            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -140,15 +145,12 @@ public class HomeActivity extends AppCompatActivity {
     @Subscribe
     public void onEventMainThread(Integer code) {
 
-        final int statuscCode = code;
+        final int statusCode = code;
         runOnUiThread(new Runnable() {
             public void run() {
-                if (statuscCode == 201) {
+                if (statusCode == 201) {
                     Date startTime = new Date();
-                    AppUtils.putStringToPref(HomeActivity.this,"time",Long.toString(startTime.getTime()));
-                    Toast.makeText(HomeActivity.this, "Location added successfully to the server", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(HomeActivity.this, "There is a problem in posting location to the server", Toast.LENGTH_SHORT).show();
+                    AppUtils.putStringToPref(HomeActivity.this, AppConstants.TIME, Long.toString(startTime.getTime()));
                 }
             }
         });
@@ -199,15 +201,14 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AppUtils.putStringToPref(this,"username",edtName.getText().toString());
-        mEventBus.unregister(this);
+        AppUtils.putStringToPref(this, AppConstants.USER_NAME, edtName.getText().toString());
         mGps.stopUsingGPS();
     }
 
     /**
      * method to update the last submitted time
      */
-    private void updateLastSubmittedTime(){
+    private void updateLastSubmittedTime() {
         Thread t = new Thread() {
 
             @Override
@@ -218,24 +219,35 @@ public class HomeActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                String date=AppUtils.getStringFromPref(HomeActivity.this,"time","");
+                                updateTime();
 
-                                long d1=Long.parseLong(date);
-
-                                Date endDate=new Date();
-                                long d2=endDate.getTime();
-
-                                String time=AppUtils.convertTime(d2-d1);
-
-                                tvLastSubmitted.setText("Last submitted "+ time +" ago");
                             }
                         });
                     }
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         };
 
         t.start();
+    }
+
+    private void updateTime() {
+        String date = AppUtils.getStringFromPref(HomeActivity.this, AppConstants.TIME, "0");
+
+        long d1 = Long.parseLong(date);
+
+        Date endDate = new Date();
+        long d2 = endDate.getTime();
+
+        String time = AppUtils.convertTime(d2 - d1);
+
+        if (date.equals("0")) {
+            tvLastSubmitted.setVisibility(View.INVISIBLE);
+        } else {
+            tvLastSubmitted.setVisibility(View.VISIBLE);
+            tvLastSubmitted.setText(getString(R.string.last_submitted) + " " + time);
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.android.mobileassignment.model;
 
-import android.content.Context;
+import android.app.Activity;
+import android.widget.Toast;
 import com.android.mobileassignment.AppConstants;
+import com.android.mobileassignment.R;
 import com.android.mobileassignment.data.ErrorType;
 import com.android.mobileassignment.utils.network.VolleyServiceGateway;
 import com.android.volley.VolleyError;
@@ -14,10 +16,10 @@ import java.util.Map;
  */
 public class SubmitLocationModel {
 
-    private Context mContext;
+    private Activity mContext;
     private EventBus mEventBus = EventBus.getDefault();
 
-    public SubmitLocationModel(Context context) {
+    public SubmitLocationModel(Activity context) {
         mContext = context;
     }
 
@@ -34,8 +36,8 @@ public class SubmitLocationModel {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("LATITUDE", latitude);
-                params.put("LONGITUDE", longitude);
+                params.put(AppConstants.LATITUDE, latitude);
+                params.put(AppConstants.LONGITUDE, longitude);
                 return params;
             }
 
@@ -45,8 +47,21 @@ public class SubmitLocationModel {
             }
 
             @Override
-            protected void processResponseCode(int statusCode) {
-                mEventBus.post(new Integer(statusCode));
+            protected void processResponseCode(int code) {
+                final int statusCode = code;
+
+                mContext.runOnUiThread(new Runnable() {
+                    public void run() {
+                        if (statusCode == 201) {
+
+                            Toast.makeText(mContext, mContext.getString(R.string.success_submit_location), Toast.LENGTH_SHORT).show();
+                        } else {
+                    Toast.makeText(mContext, mContext.getString(R.string.failure_submit_location), Toast.LENGTH_SHORT).show();
+                }
+                    }
+                });
+
+                mEventBus.post(Integer.valueOf(statusCode));
             }
 
             @Override

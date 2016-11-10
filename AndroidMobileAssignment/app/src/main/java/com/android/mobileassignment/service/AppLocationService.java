@@ -12,7 +12,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
+
+import com.android.mobileassignment.R;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,7 +38,7 @@ public class AppLocationService implements LocationListener {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 5 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // half minute
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 30; // half minute
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -93,7 +94,6 @@ public class AppLocationService implements LocationListener {
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
-                        Log.d("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -173,13 +173,13 @@ public class AppLocationService implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS settings");
+        alertDialog.setTitle(mContext.getString(R.string.gps_settings));
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to enable it?");
+        alertDialog.setMessage(mContext.getString(R.string.gps_settings_msg));
 
         // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(mContext.getString(R.string.gps_settings_btn_text), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivity(intent);
@@ -187,7 +187,7 @@ public class AppLocationService implements LocationListener {
         });
 
         // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(mContext.getString(R.string.gps_settings_cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }

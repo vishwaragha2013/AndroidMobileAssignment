@@ -67,7 +67,7 @@ public class AppUtils {
 
         switch (errorCode) {
             default:
-                errorMsg = "Network Error";
+                errorMsg = context.getString(R.string.internet_error);
                 break;
         }
         return errorMsg;
@@ -129,6 +129,11 @@ public class AppUtils {
         return sharedPref.getString(key, defaultVal);
     }
 
+    /**
+     * method to convert time in readable format
+     * @param timeDifferenceMilliseconds
+     * @return time
+     */
     public static String convertTime(long timeDifferenceMilliseconds) {
         long diffSeconds = timeDifferenceMilliseconds / 1000;
         long diffMinutes = timeDifferenceMilliseconds / (60 * 1000);
@@ -139,21 +144,21 @@ public class AppUtils {
         long diffYears = timeDifferenceMilliseconds / ((long) 60 * 60 * 1000 * 24 * 365);
 
         if (diffSeconds < 1) {
-            return "less than a second";
+            return "less than a second ago";
         } else if (diffMinutes < 1) {
-            return diffSeconds + " seconds";
+            return diffSeconds + " seconds ago";
         } else if (diffHours < 1) {
-            return diffMinutes + " minutes";
+            return diffMinutes + " minutes ago";
         } else if (diffDays < 1) {
-            return diffHours + " hours";
+            return diffHours + " hours ago";
         } else if (diffWeeks < 1) {
-            return diffDays + " days";
+            return diffDays + " days ago";
         } else if (diffMonths < 1) {
-            return diffWeeks + " weeks";
+            return diffWeeks + " weeks ago";
         } else if (diffYears < 1) {
-            return diffMonths + " months";
+            return diffMonths + " months ago";
         } else {
-            return diffYears + " years";
+            return diffYears + " years ago";
         }
     }
 

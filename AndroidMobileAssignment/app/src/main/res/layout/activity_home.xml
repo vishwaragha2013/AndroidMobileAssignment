@@ -66,6 +66,5 @@
         android:layout_below="@+id/btn_submit"
         android:layout_centerInParent="true"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:text="Last submitted 0 seconds ago" />
+        android:gravity="center" />
 </RelativeLayout>

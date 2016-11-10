@@ -6,4 +6,12 @@
 
     <string name="internet_error">Internet not available. Please check your connection and try again!</string>
     <string name="internet_connected">Internet connection has been established. Reload this screen to move forward.</string>
+    <string name="location_not_found">Current location is not found yet</string>
+    <string name="success_submit_location">Location added successfully to the server</string>
+    <string name="failure_submit_location">There is a problem in posting location to the server</string>
+    <string name="last_submitted">Last submitted </string>
+    <string name="gps_settings">GPS Settings</string>
+    <string name="gps_settings_msg">GPS is not enabled. Do you want to enable it?</string>
+    <string name="gps_settings_btn_text">Settings</string>
+    <string name="gps_settings_cancel">Cancel</string>
 </resources>

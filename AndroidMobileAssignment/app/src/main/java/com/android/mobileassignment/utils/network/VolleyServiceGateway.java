@@ -3,25 +3,16 @@ package com.android.mobileassignment.utils.network;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
-
+import com.android.mobileassignment.AppConstants;
 import com.android.mobileassignment.utils.AppUtils;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,14 +58,12 @@ public abstract class VolleyServiceGateway {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
                         processResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
                         processError(error);
                     }
                 }) {
@@ -93,11 +82,11 @@ public abstract class VolleyServiceGateway {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = makeHeaders();
-                String credentials = "vishwanath" + ":" + "roger23roma";
+                String credentials = AppConstants.UN + ":" + AppConstants.PWD;
                 String auth = "Basic "
                         + Base64.encodeToString(credentials.getBytes(),
                         Base64.NO_WRAP);
-                headers.put("Authorization", auth);
+                headers.put(AppConstants.AUTHORIZATION_KEY, auth);
                 return headers;
             }
         };
