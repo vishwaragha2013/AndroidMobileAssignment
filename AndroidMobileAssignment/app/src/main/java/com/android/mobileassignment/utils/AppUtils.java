@@ -129,5 +129,33 @@ public class AppUtils {
         return sharedPref.getString(key, defaultVal);
     }
 
+    public static String convertTime(long timeDifferenceMilliseconds) {
+        long diffSeconds = timeDifferenceMilliseconds / 1000;
+        long diffMinutes = timeDifferenceMilliseconds / (60 * 1000);
+        long diffHours = timeDifferenceMilliseconds / (60 * 60 * 1000);
+        long diffDays = timeDifferenceMilliseconds / (60 * 60 * 1000 * 24);
+        long diffWeeks = timeDifferenceMilliseconds / (60 * 60 * 1000 * 24 * 7);
+        long diffMonths = (long) (timeDifferenceMilliseconds / (60 * 60 * 1000 * 24 * 30.41666666));
+        long diffYears = timeDifferenceMilliseconds / ((long) 60 * 60 * 1000 * 24 * 365);
+
+        if (diffSeconds < 1) {
+            return "less than a second";
+        } else if (diffMinutes < 1) {
+            return diffSeconds + " seconds";
+        } else if (diffHours < 1) {
+            return diffMinutes + " minutes";
+        } else if (diffDays < 1) {
+            return diffHours + " hours";
+        } else if (diffWeeks < 1) {
+            return diffDays + " days";
+        } else if (diffMonths < 1) {
+            return diffWeeks + " weeks";
+        } else if (diffYears < 1) {
+            return diffMonths + " months";
+        } else {
+            return diffYears + " years";
+        }
+    }
+
 
 }

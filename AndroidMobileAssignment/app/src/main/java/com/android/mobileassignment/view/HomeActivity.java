@@ -23,6 +23,8 @@ import com.android.mobileassignment.utils.AppUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Date;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -66,6 +68,8 @@ public class HomeActivity extends AppCompatActivity {
         initGps();
 
         setUserName();
+
+        updateLastSubmittedTime();
 
     }
 
@@ -140,6 +144,8 @@ public class HomeActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             public void run() {
                 if (statuscCode == 201) {
+                    Date startTime = new Date();
+                    AppUtils.putStringToPref(HomeActivity.this,"time",Long.toString(startTime.getTime()));
                     Toast.makeText(HomeActivity.this, "Location added successfully to the server", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(HomeActivity.this, "There is a problem in posting location to the server", Toast.LENGTH_SHORT).show();
@@ -164,8 +170,6 @@ public class HomeActivity extends AppCompatActivity {
         mLongitude = location.getLongitude();
 
         tvLocationValue.setText(mLatitude + "," + mLongitude);
-
-        Toast.makeText(HomeActivity.this, "latitude:" + mLongitude + "::" + mLongitude, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -198,5 +202,40 @@ public class HomeActivity extends AppCompatActivity {
         AppUtils.putStringToPref(this,"username",edtName.getText().toString());
         mEventBus.unregister(this);
         mGps.stopUsingGPS();
+    }
+
+    /**
+     * method to update the last submitted time
+     */
+    private void updateLastSubmittedTime(){
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(5000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String date=AppUtils.getStringFromPref(HomeActivity.this,"time","");
+
+                                long d1=Long.parseLong(date);
+
+                                Date endDate=new Date();
+                                long d2=endDate.getTime();
+
+                                String time=AppUtils.convertTime(d2-d1);
+
+                                tvLastSubmitted.setText("Last submitted "+ time +" ago");
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        t.start();
     }
 }
