@@ -47,7 +47,7 @@
         android:layout_alignStart="@+id/tv_location"
         android:layout_below="@+id/tv_location"
         android:layout_marginTop="@dimen/small_margin"
-        android:text="12.556,-237865.89" />
+        android:text="0.0,0.0" />
 
     <Button
         android:id="@+id/btn_submit"

@@ -1,21 +1,25 @@
 package com.android.mobileassignment.view;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.mobileassignment.R;
 import com.android.mobileassignment.data.ErrorType;
 import com.android.mobileassignment.presenter.LocationPresenter;
+import com.android.mobileassignment.service.AppLocationService;
 import com.android.mobileassignment.utils.AppUtils;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -39,6 +43,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private EventBus mEventBus = EventBus.getDefault();
     private LocationPresenter mLocationPresenter;
+    private AppLocationService mGps;
+    private double mLongitude;
+    private double mLatitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +53,36 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        tvName.setPaintFlags(tvName.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
-        tvLocation.setPaintFlags(tvLocation.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+        mEventBus.register(this);
 
-        mLocationPresenter=new LocationPresenter(this);
+        tvName.setPaintFlags(tvName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tvLocation.setPaintFlags(tvLocation.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        mLocationPresenter = new LocationPresenter(this);
+        mGps = new AppLocationService(HomeActivity.this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (checkSelfPermission(
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+
+            } else {
+                getGpsLocation();
+            }
+
+        } else {
+            getGpsLocation();
+        }
+
+        if(mLatitude!=0.0 && mLongitude!=0.0) {
+            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+        }
+        else{
+            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -57,24 +90,34 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mEventBus.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mEventBus.unregister(this);
+        if(mLatitude!=0.0 && mLongitude!=0.0) {
+            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+        }
+        else{
+            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @OnClick(R.id.btn_submit)
     public void onClick() {
-        mLocationPresenter.submitLocationToServer("456","56565");
+        if(mLatitude!=0.0 && mLongitude!=0.0) {
+            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+        }
+        else{
+            Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     @Subscribe
     public void onEventMainThread(Integer code) {
-
 
         final int statuscCode = code;
         runOnUiThread(new Runnable() {
@@ -97,4 +140,45 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe
+    public void onEventMainThread(Location location) {
+
+        mLatitude=location.getLatitude();
+        mLongitude=location.getLongitude();
+
+        tvLocationValue.setText(mLatitude + "," + mLongitude);
+
+        Toast.makeText(HomeActivity.this, "latitude:"+mLongitude+"::"+mLongitude, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                getGpsLocation();
+            }
+        }
+    }
+
+    private void getGpsLocation() {
+
+        // check if GPS enabled
+        if (mGps.canGetLocation()) {
+            mLatitude = mGps.getLatitude();
+            mLongitude = mGps.getLongitude();
+
+            tvLocationValue.setText(mLatitude + "," + mLongitude);
+        } else {
+            mGps.showSettingsAlert();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mEventBus.unregister(this);
+        mGps.stopUsingGPS();
+    }
 }
