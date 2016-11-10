@@ -21,4 +21,4 @@ Alternatively use the "gradlew build" command to build the project directly.
 
 # Issues
 
-Find a bug or want to request a new feature enhancement? Please let us know by submitting an issue.
+Find a bug or want to request a new feature enhancement? Please let me know by submitting an issue.
