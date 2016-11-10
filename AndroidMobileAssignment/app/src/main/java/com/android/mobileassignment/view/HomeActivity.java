@@ -13,13 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.mobileassignment.R;
 import com.android.mobileassignment.data.ErrorType;
 import com.android.mobileassignment.presenter.LocationPresenter;
 import com.android.mobileassignment.service.AppLocationService;
 import com.android.mobileassignment.utils.AppUtils;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,6 +62,15 @@ public class HomeActivity extends AppCompatActivity {
         tvLocation.setPaintFlags(tvLocation.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         mLocationPresenter = new LocationPresenter(this);
+
+        initGps();
+
+        setUserName();
+
+    }
+
+    private void initGps() {
+
         mGps = new AppLocationService(HomeActivity.this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -77,13 +89,20 @@ public class HomeActivity extends AppCompatActivity {
             getGpsLocation();
         }
 
-        if(mLatitude!=0.0 && mLongitude!=0.0) {
+        if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
-        }
-        else{
+        } else {
             Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
         }
+    }
 
+
+    private void setUserName(){
+        String name=AppUtils.getStringFromPref(this,"username","John Doe");
+        if(name.isEmpty()){
+            name="John Doe";
+        }
+        edtName.setText(name);
     }
 
 
@@ -95,10 +114,9 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mLatitude!=0.0 && mLongitude!=0.0) {
+        if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
-        }
-        else{
+        } else {
             Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
         }
 
@@ -107,10 +125,9 @@ public class HomeActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_submit)
     public void onClick() {
-        if(mLatitude!=0.0 && mLongitude!=0.0) {
+        if (mLatitude != 0.0 && mLongitude != 0.0) {
             mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
-        }
-        else{
+        } else {
             Toast.makeText(HomeActivity.this, "current location is not found yet", Toast.LENGTH_SHORT).show();
         }
     }
@@ -143,12 +160,12 @@ public class HomeActivity extends AppCompatActivity {
     @Subscribe
     public void onEventMainThread(Location location) {
 
-        mLatitude=location.getLatitude();
-        mLongitude=location.getLongitude();
+        mLatitude = location.getLatitude();
+        mLongitude = location.getLongitude();
 
         tvLocationValue.setText(mLatitude + "," + mLongitude);
 
-        Toast.makeText(HomeActivity.this, "latitude:"+mLongitude+"::"+mLongitude, Toast.LENGTH_SHORT).show();
+        Toast.makeText(HomeActivity.this, "latitude:" + mLongitude + "::" + mLongitude, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -178,6 +195,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        AppUtils.putStringToPref(this,"username",edtName.getText().toString());
         mEventBus.unregister(this);
         mGps.stopUsingGPS();
     }

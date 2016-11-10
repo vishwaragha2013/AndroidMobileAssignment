@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,6 +20,7 @@ public class AppUtils {
 
 
     private static ProgressDialog sProgressDialog;
+    private static final String APP_STATE = "com.android.mobileassignment";
 
 
     /**
@@ -91,5 +93,41 @@ public class AppUtils {
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.show();
     }
+
+
+    /**
+     * method to add string to shared preference
+     *
+     * @param context     application context
+     * @param key         key to saved inside sharedPreference
+     * @param stringValue value to be assigned the key
+     */
+    public static void putStringToPref(Context context, String key,
+                                       String stringValue) {
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                APP_STATE, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(key, stringValue);
+        editor.apply();
+    }
+
+    /**
+     * method returns the string value from shared preferences
+     *
+     * @param context    application context
+     * @param key        key to saved inside sharedPreference
+     * @param defaultVal default value inside sharedPreference
+     * @return stringValue
+     */
+    public static String getStringFromPref(Context context, String key,
+                                           String defaultVal) {
+
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                APP_STATE, Context.MODE_PRIVATE);
+
+        return sharedPref.getString(key, defaultVal);
+    }
+
 
 }
