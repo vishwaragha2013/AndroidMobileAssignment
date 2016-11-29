@@ -55,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
     private AppLocationService mGps;
     private double mLongitude;
     private double mLatitude;
+    private String mName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class HomeActivity extends AppCompatActivity {
         updateTime();
 
         updateLastSubmittedTime();
+
+        mName=edtName.getText().toString();
 
     }
 
@@ -98,7 +101,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if (mLatitude != 0.0 && mLongitude != 0.0) {
-            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+            mLocationPresenter.submitLocationToServer(mName,Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
             Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
@@ -124,7 +127,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (mLatitude != 0.0 && mLongitude != 0.0) {
-            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+            mLocationPresenter.submitLocationToServer(mName,Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
             Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }
@@ -135,7 +138,7 @@ public class HomeActivity extends AppCompatActivity {
     @OnClick(R.id.btn_submit)
     public void onClick() {
         if (mLatitude != 0.0 && mLongitude != 0.0) {
-            mLocationPresenter.submitLocationToServer(Double.toString(mLatitude), Double.toString(mLongitude));
+            mLocationPresenter.submitLocationToServer(mName,Double.toString(mLatitude), Double.toString(mLongitude));
         } else {
             Toast.makeText(HomeActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
         }

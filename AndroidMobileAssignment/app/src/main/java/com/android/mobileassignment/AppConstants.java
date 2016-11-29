@@ -15,8 +15,7 @@ public class AppConstants {
     public static final String TIME = "time";
 
     //network
-    public static final String LATITUDE = "LATITUDE";
-    public static final String LONGITUDE = "LONGITUDE";
+    public static final String DATA = "data";
     public static final String UN = "vishwanath";
     public static final String PWD = "roger23roma";
     public static final String AUTHORIZATION_KEY = "Authorization";

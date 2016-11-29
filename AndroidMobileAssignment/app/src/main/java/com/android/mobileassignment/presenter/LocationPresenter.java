@@ -16,9 +16,9 @@ public class LocationPresenter {
         mContext = context;
     }
 
-    public void submitLocationToServer(String latitude, String longitude) {
+    public void submitLocationToServer(String name,String latitude, String longitude) {
         SubmitLocationModel submitLocationModel = new SubmitLocationModel(mContext);
-        submitLocationModel.submitLocation(latitude, longitude);
+        submitLocationModel.submitLocation(name,latitude, longitude);
     }
 
 }

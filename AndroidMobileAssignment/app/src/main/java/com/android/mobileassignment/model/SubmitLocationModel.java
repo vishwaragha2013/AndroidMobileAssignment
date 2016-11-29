@@ -28,7 +28,7 @@ public class SubmitLocationModel {
         mContext = context;
     }
 
-    public void submitLocation(final String latitude, final String longitude) {
+    public void submitLocation(final String name,final String latitude, final String longitude) {
 
         VolleyServiceGateway volleyService = new VolleyServiceGateway(mContext) {
             @Override
@@ -41,8 +41,7 @@ public class SubmitLocationModel {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> params = new HashMap<>();
-                params.put(AppConstants.LATITUDE, latitude);
-                params.put(AppConstants.LONGITUDE, longitude);
+                params.put(AppConstants.DATA, name+" is now at "+latitude+"/"+longitude);
                 return params;
             }
 
