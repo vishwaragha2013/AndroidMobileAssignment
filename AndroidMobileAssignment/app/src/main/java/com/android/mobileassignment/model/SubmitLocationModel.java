@@ -39,7 +39,7 @@ public class SubmitLocationModel {
             }
 
             @Override
-            protected Map<String, String> getParams() {
+            protected Map<String, String> getParamsData() {
                 HashMap<String, String> params = new HashMap<>();
                 params.put(AppConstants.DATA, name+" is now at "+latitude+"/"+longitude);
                 return params;

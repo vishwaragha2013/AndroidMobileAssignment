@@ -32,7 +32,7 @@ public abstract class VolleyServiceGateway {
 
     abstract protected Map<String, String> makeHeaders();
 
-    abstract protected Map<String, String> getParams();
+    abstract protected Map<String, String> getParamsData();
 
     abstract protected void processResponse(String response);
 
@@ -76,7 +76,8 @@ public abstract class VolleyServiceGateway {
 
             @Override
             protected Map<String, String> getParams() {
-                return new HashMap<>();
+                Map<String, String> paramsData=getParamsData();
+                return paramsData;
             }
 
             @Override
